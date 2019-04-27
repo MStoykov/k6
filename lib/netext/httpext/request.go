@@ -355,18 +355,29 @@ func MakeRequest(ctx context.Context, preq *ParsedHTTPRequest) (*Response, error
 // SetRequestCookies sets the cookies of the requests getting those cookies both from the jar and
 // from the reqCookies map. The Replace field of the HTTPRequestCookie will be taken into account
 func SetRequestCookies(req *http.Request, jar *cookiejar.Jar, reqCookies map[string]*HTTPRequestCookie) {
+	var c = ""
+	var addCookie = func(cookie http.Cookie) {
+		s := fmt.Sprintf("%s=%s", cookie.Name, cookie.Value)
+		if c != "" {
+			c += "; " + s
+		} else {
+			c = s
+		}
+	}
 	var replacedCookies = make(map[string]struct{})
 	for key, reqCookie := range reqCookies {
-		req.AddCookie(&http.Cookie{Name: key, Value: reqCookie.Value})
+		addCookie(http.Cookie{Name: key, Value: reqCookie.Value})
 		if reqCookie.Replace {
 			replacedCookies[key] = struct{}{}
 		}
 	}
-	for _, c := range jar.Cookies(req.URL) {
-		if _, ok := replacedCookies[c.Name]; !ok {
-			req.AddCookie(&http.Cookie{Name: c.Name, Value: c.Value})
+	for _, jarCookie := range jar.Cookies(req.URL) {
+		if _, ok := replacedCookies[jarCookie.Name]; !ok {
+			addCookie(http.Cookie{Name: jarCookie.Name, Value: jarCookie.Value})
 		}
 	}
+
+	req.Header.Set("Cookie", c)
 }
 
 func debugRequest(state *lib.State, req *http.Request, description string) {
