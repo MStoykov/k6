@@ -53,6 +53,7 @@ jobs:
         # Why is `go mod vendor` needed here!? If it's not run then
         # golangci-lint fails because of inconsistent vendoring...
         run: |
+          echo "Something testing"
           go get github.com/golangci/golangci-lint/cmd/golangci-lint@$GOLANGCI_VERSION
           BASEREV=$(git merge-base HEAD origin/master)
           echo "Base revision: $BASEREV"
