@@ -282,7 +282,8 @@ func TestDefaultTLSError(t *testing.T) {
 
 		server.ServeConn(conn, &http2.ServeConnOpts{
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// whatever
+				// sleep a while so we don't close the connection too fast and get a different error
+				time.Sleep(time.Second)
 			}),
 		})
 	}()
