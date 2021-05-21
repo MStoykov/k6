@@ -25,12 +25,18 @@ import (
 	"net"
 	"os"
 	"syscall"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func getOSSyscallErrorCode(e *net.OpError, se *os.SyscallError) (errCode, string) {
+	spew.Dump(se.Unwrap())
+	spew.Dump(uintptr(se.Unwrap().(syscall.Errno)))
+	spew.Dump(int(se.Unwrap().(syscall.Errno)))
 	switch se.Unwrap() {
 	case syscall.WSAECONNRESET:
 		return tcpResetByPeerErrorCode, fmt.Sprintf(tcpResetByPeerErrorCodeMsg, e.Op)
+	default:
 	}
 	return 0, ""
 }
