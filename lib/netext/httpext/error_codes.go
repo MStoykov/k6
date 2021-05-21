@@ -31,6 +31,7 @@ import (
 	"runtime"
 	"syscall"
 
+	"github.com/davecgh/go-spew/spew"
 	"golang.org/x/net/http2"
 
 	"go.k6.io/k6/lib/netext"
@@ -116,6 +117,7 @@ func errorCodeForNetOpError(err *net.OpError) (errCode, string) {
 	// we should even check for *os.SyscallError in the main switch body in the
 	// parent errorCodeForError() function?
 
+	spew.Dump(err)
 	if err.Net != "tcp" && err.Net != "tcp6" {
 		// TODO: figure out how this happens
 		return defaultNetNonTCPErrorCode, err.Error()
@@ -176,6 +178,7 @@ func errorCodeForError(err error) (errCode, string) {
 	// checking for the concrete error types first gives us the opportunity to
 	// also directly detect high-level errors, if we need to, even if they wrap
 	// a low level error inside.
+	spew.Dump(err)
 	switch e := err.(type) {
 	case K6Error:
 		return e.Code, e.Message
