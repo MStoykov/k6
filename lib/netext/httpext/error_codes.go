@@ -136,6 +136,7 @@ func errorCodeForNetOpError(err *net.OpError) (errCode, string) {
 			return code, msg
 		}
 	}
+	spew.Dump("not syscall", err)
 	if err.Op != "dial" {
 		switch inErr := err.Err.(type) {
 		case syscall.Errno:

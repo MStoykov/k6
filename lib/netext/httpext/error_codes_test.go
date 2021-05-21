@@ -280,12 +280,8 @@ func TestDefaultTLSError(t *testing.T) {
 		conn, err := l.Accept() //nolint:govet // the shadowing is intentional
 		require.NoError(t, err)
 
-		server.ServeConn(conn, &http2.ServeConnOpts{
-			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// sleep a while so we don't close the connection too fast and get a different error
-				time.Sleep(time.Second)
-			}),
-		})
+		conn.Write([]byte("someting"))
+		time.Sleep(time.Second)
 	}()
 
 	client := http.Client{
@@ -301,7 +297,7 @@ func TestDefaultTLSError(t *testing.T) {
 	require.Error(t, err)
 
 	code, msg := errorCodeForError(err)
-	assert.Equal(t, tlsHeaderErrorCode, code)
+	assert.Equal(t, int(tlsHeaderErrorCode), int(code))
 	urlError := new(url.Error)
 	require.ErrorAs(t, err, &urlError)
 	assert.Equal(t, urlError.Err.Error(), msg)
