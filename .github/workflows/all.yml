@@ -130,12 +130,7 @@ jobs:
       - name: Run tests with code coverage
         run: |
           go version
-          export GOMAXPROCS=1
-          go test ./lib/netext/httpext -run TestDefaultTLSError -count 10 -failfast
-          go test ./lib/netext/httpext -run TestDefaultTLSError -race -count 10 -failfast
-          export GOMAXPROCS=2
-          go test ./lib/netext/httpext -run TestDefaultTLSError -count 10 -failfast
-          go test ./lib/netext/httpext -run TestDefaultTLSError -race -count 10 -failfast
+          go test ./lib/netext/httpext -run TestDefaultTLSError -count 1000 -cpu 1,2,4 -failfast
 
   configure:
     runs-on: ubuntu-latest
