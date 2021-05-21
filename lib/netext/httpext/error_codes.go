@@ -128,6 +128,8 @@ func errorCodeForNetOpError(err *net.OpError) (errCode, string) {
 			return tcpResetByPeerErrorCode, fmt.Sprintf(tcpResetByPeerErrorCodeMsg, err.Op)
 		case syscall.EPIPE:
 			return tcpBrokenPipeErrorCode, fmt.Sprintf(tcpBrokenPipeErrorCodeMsg, err.Op)
+		default:
+			spew.Dump(int(sErr.Unwrap().(syscall.Errno)))
 		}
 		code, msg := getOSSyscallErrorCode(err, sErr)
 		if code != 0 {
